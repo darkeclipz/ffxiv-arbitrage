@@ -22,6 +22,18 @@ In `.env` the following settings can be changed:
  * `MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS`, time before the cached market data expires and needs to be re-indexed (default `4`).
  * `DISCORD_WEBHOOK`, the Discord webhook URL to which a notification is send.
 
+### Example `.env`
+
+```
+HOME_WORLD=33
+DISCORD_WEBHOOK=https://discord.com/api/webhooks/XXXXX/XXXXXXXXX
+UNIVERSALIS_WEBSOCKET_ADDR=wss://universalis.app/api/ws
+SELL_TAX=0.05
+BUY_TAX=0.05
+ARBITRAGE_PROFIT_THRESHOLD = 300000
+MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS = 4
+```
+
 ## Dependencies
 
 ```
