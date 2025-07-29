@@ -14,13 +14,13 @@ def get_item_name(item_id: int) -> str:
 
 
 worlds = {
-    402: "Alpha",
-    36: "Lich",
-    66: "Odin",
-    56: "Phoenix",
-    67: "Shiva",
     33: "Twintania",
-    42: "Zodiark"
+    36: "Lich",
+    42: "Zodiark",
+    56: "Phoenix",
+    66: "Odin",
+    67: "Shiva",
+    402: "Alpha",
 }
 def get_world_name(world_id: int) -> str:
     global worlds
