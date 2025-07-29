@@ -8,18 +8,19 @@ Use with caution.
 ## How to use
 
  1. Clone the project to a folder of your liking.
- 2. Create a `.env` file and add `DISCORD_HOOK=<HOOK_URL>` (the entire url).
+ 2. Create an `.env` file, see [Configuration](#configuration) for more information.
  3. Run `python app.py` and wait for ~15 minutes to index the market board.
 
 ## Configuration
 
-In `app.py` the following settings can be changed:
+In `.env` the following settings can be changed:
 
  * `HOME_WORLD`, see `arbitrage/naming.py` for a list of worlds and their ID.
  * `SELL_TAX`, sell tax percentage that is applied (default `0.05`).
  * `BUY_TAX`, buy tax percentage that is applied (default `0.05`).
- * `ARBITRAGE_PROFIT_THRESHOLD`, minimum profit needed before a notification is send.
- * `MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS`, time before the cached market data expires and needs to be re-indexed.
+ * `ARBITRAGE_PROFIT_THRESHOLD`, minimum profit needed before a notification is send (default `100_000`).
+ * `MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS`, time before the cached market data expires and needs to be re-indexed (default `4`).
+ * `DISCORD_WEBHOOK`, the Discord webhook URL to which a notification is send.
 
 ## Dependencies
 
