@@ -1,8 +1,8 @@
 # FFXIV Arbitrage
 
-This script indexes the entire market board for your home server and listens to listing events on other server.
-If the different between the lowest price of the item on your server and the listing price on the other server exceeds some thresold, a notification will be send to a Discord webhook. 
-This can be used to find positive financial oppertunities, although just blindly following every arbitrage oppertunity that it finds usually ain't a good idea.
+This script indexes the entire market board for your home server and listens to listing events on other servers.
+If the different between the lowest price of the item on your server and the listing price on the other server exceeds some threshold, a notification will be send to a Discord webhook. 
+This can be used to find arbitrage oppertunities, although just blindly following every arbitrage oppertunity that it finds usually ain't a good idea.
 Use at your own caution.
 
 ## How to use
