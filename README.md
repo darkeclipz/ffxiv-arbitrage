@@ -32,7 +32,7 @@ pip install dotenv
 pip install tqdm
 ```
 
-### Notes
+### Notes about dependencies
 
  * `pymongo` is used for `bson`.
  * `websocked-client` is used for `websocket`.
