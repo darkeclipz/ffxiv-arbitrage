@@ -119,7 +119,7 @@ def arbitrager(arbitrager_queue, http_scraper_queue, stop_event):
             for sale in sale_event.sales:
                 is_hq = " (high-quality)" if sale.hq else ""
                 if DB_PARAMS.is_valid():
-                    db_insert_row(sale.timestamp, sale_event.world_id, sale_event.item_code, sale.price_per_unit, sale.quantity, DB_PARAMS)
+                    db_insert_row(sale.timestamp, sale_event.world_id, sale_event.item_code, sale.price_per_unit, sale.quantity, sale.hq, DB_PARAMS)
                 print(f"{sale.buyer_name} ({get_world_name(sale_event.world_id)}) purchased {sale.quantity:,} × {get_item_name(sale_event.item_code)}{is_hq} for {sale.price_per_unit:,} gil each, totaling {sale.total:,} gil.")
             if sale_event.world_id == HOME_WORLD:
                 http_scraper_queue.put(Event.update_item({ "item_code": sale_event.item_code }))
