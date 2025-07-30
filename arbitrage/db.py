@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
     price INTEGER NOT NULL,
     quantity SMALLINT NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_item_time ON ffxiv_market_board_sales (itemID, time DESC);
+CREATE INDEX IF NOT EXISTS idx_item_time ON {TABLE_NAME} (itemID, time DESC);
 """
 
 HYPERTABLE_QUERY = f"""
