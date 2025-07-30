@@ -21,17 +21,38 @@ In `.env` the following settings can be changed:
  * `ARBITRAGE_PROFIT_THRESHOLD`, minimum profit needed before a notification is send (default `100_000`).
  * `MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS`, time before the cached market data expires and needs to be re-indexed (default `4`).
  * `DISCORD_WEBHOOK`, the Discord webhook URL to which a notification is send.
+ * `DB_HOST`, the database host name.
+ * `DB_POST`, the database port (default `5432`).
+ * `DB_USER`, the username for the database.
+ * `DB_PASSWORD`, the password for the database.
+ * `DB_NAME`, the database name.
+ * `DB_TIMESCALE`, used to create a hypertable if TimescaleDB is added to PostreSQL. Set to `1` to use (default `0`).
 
 ### Example `.env`
 
 ```
+# Arbitrager parameters
 HOME_WORLD=33
-DISCORD_WEBHOOK=https://discord.com/api/webhooks/XXXXX/XXXXXXXXX
-UNIVERSALIS_WEBSOCKET_ADDR=wss://universalis.app/api/ws
 SELL_TAX=0.05
 BUY_TAX=0.05
-ARBITRAGE_PROFIT_THRESHOLD = 300000
-MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS = 4
+ARBITRAGE_PROFIT_THRESHOLD=100000
+
+# Universalis
+UNIVERSALIS_WEBSOCKET_ADDR=wss://universalis.app/api/ws
+
+# Market board caching
+MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS=4
+
+# Discord notifications
+DISCORD_WEBHOOK=https://discord.com/api/webhooks/xxxx/xxxxxxxxxxx
+
+# Database settings
+DB_HOST=example.com
+DB_PORT=5432
+DB_USER=user
+DB_PASSWORD=password
+DB_NAME=db_name
+DB_TIMESCALE=0
 ```
 
 ## Dependencies
@@ -42,6 +63,7 @@ pip install websocket-client
 pip install requests
 pip install dotenv
 pip install tqdm
+pip install psycopg2
 ```
 
 ### Notes about dependencies

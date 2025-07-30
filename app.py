@@ -11,6 +11,7 @@ from arbitrage.events import Event
 from arbitrage.naming import get_item_name, get_world_name, worlds
 from arbitrage.universalis import ListingEvent, MarketBoardCurrentData, SaleEvent, get_market_board, get_market_board_current_data, parse_listing_event, parse_sale_event
 from arbitrage.helpers import dispatch_discord_notification
+from arbitrage.db import DbParameters, initialize_database, db_insert_row, db_flush_rows
 
 
 load_dotenv()
@@ -22,6 +23,14 @@ SELL_TAX = float(os.getenv("SELL_TAX", 0.05))
 BUY_TAX = float(os.getenv("BUY_TAX", 0.05))
 ARBITRAGE_PROFIT_THRESHOLD = int(os.getenv("ARBITRAGE_PROFIT_THRESHOLD", 100_000))
 MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS = int(os.getenv("MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS", 4))
+DB_PARAMS = DbParameters(
+    os.getenv("DB_HOST", ""),
+    int(os.getenv("DB_PORT", 5432)),
+    os.getenv("DB_USER", ""),
+    os.getenv("DB_PASSWORD", ""),
+    os.getenv("DB_NAME", "")
+)
+DB_USE_TIMESCALE = os.getenv("DB_TIMESCALE", "0") == "1"
 
 
 if not all([HOME_WORLD, WEBSOCKET_ADDR, SELL_TAX, BUY_TAX, ARBITRAGE_PROFIT_THRESHOLD, MARKET_BOARD_DATA_EXPIRES_AFTER_HOURS]):
@@ -45,8 +54,8 @@ def http_scraper(http_scraper_queue, arbitrager_queue, stop_event):
 
 def websocket_client(arbitrager_queue, stop_event):
     def on_open(ws):
-        ws.send(bson.encode({"event": "subscribe", "channel": "sales/add{world=" + str(HOME_WORLD) + "}"}))
-        for world_id, _ in worlds.items():
+        for world_id in worlds.keys():
+            ws.send(bson.encode({"event": "subscribe", "channel": "sales/add{world=" + str(world_id) + "}"}))
             ws.send(bson.encode({"event": "subscribe", "channel": "listings/add{world=" + str(world_id) + "}"}))
     def on_message(ws, encoded_message):
         message = bson.decode(encoded_message)
@@ -109,8 +118,11 @@ def arbitrager(arbitrager_queue, http_scraper_queue, stop_event):
         def on_sale(sale_event: SaleEvent):
             for sale in sale_event.sales:
                 is_hq = " (high-quality)" if sale.hq else ""
+                if DB_PARAMS.is_valid():
+                    db_insert_row(sale.timestamp, sale_event.world_id, sale_event.item_code, sale.price_per_unit, sale.quantity, DB_PARAMS)
                 print(f"{sale.buyer_name} ({get_world_name(sale_event.world_id)}) purchased {sale.quantity:,} × {get_item_name(sale_event.item_code)}{is_hq} for {sale.price_per_unit:,} gil each, totaling {sale.total:,} gil.")
-            http_scraper_queue.put(Event.update_item({ "item_code": sale_event.item_code }))
+            if sale_event.world_id == HOME_WORLD:
+                http_scraper_queue.put(Event.update_item({ "item_code": sale_event.item_code }))
         def on_listing(listing_event: ListingEvent):
             if listing_event.item_code not in market_board:
                 print(f"ERROR: {get_item_name(listing_event.item_code)} ({listing_event.item_code}) not in market board.")
@@ -148,11 +160,16 @@ def arbitrager(arbitrager_queue, http_scraper_queue, stop_event):
     except Exception as err:
         print("ERROR: ", err)
         stop_event.set()
+    if DB_PARAMS.is_valid():
+        db_flush_rows(DB_PARAMS)
 
 
 def main():
     stop_event = threading.Event()
     signal.signal(signal.SIGINT, lambda _, __: stop_event.set())
+
+    if DB_PARAMS.is_valid():
+        initialize_database(DB_PARAMS, DB_USE_TIMESCALE)
 
     http_scraper_queue = queue.Queue()
     arbitrager_queue = queue.Queue()
